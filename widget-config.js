@@ -1,0 +1,1 @@
+window.CHILI_TICKETS = {"event": "6a5e3a79688fb68f0b376f0d", "token": "eyJhbGciOiJIUzI1NiIsImlzcyI6InRpY2tldHNjbG91ZC5ydSIsInR5cCI6IkpXVCJ9.eyJwYXJ0bmVyIjoiNjgxZjU5OGM1ZTUzY2Y1MDY0Y2I5M2Q1In0.b-eEzZX3LegOPjcCx-BmyadG_7MXBpDn3v53uH3Tdxk", "url": "https://polina-chili.ticketscloud.org/?utm_source=tt&utm_medium=tt&utm_campaign=tt"};
