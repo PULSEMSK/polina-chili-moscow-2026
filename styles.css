@@ -250,3 +250,10 @@ main>section>.wrap,.venue>.wrap,.rally-strip>.wrap{position:relative;z-index:5}
   .party-cup{animation-duration:9s}
   .party-ball{animation-duration:10s}
 }
+
+/* One continuous background, below every content wrapper and above section colours */
+main>section,.venue,.rally-strip,.torn-top{isolation:auto;z-index:auto}
+body>.site-paper{position:fixed;inset:0;z-index:4;mask-image:none;-webkit-mask-image:none;opacity:.34}
+main>section>.wrap,.venue>.wrap,.rally-strip>.wrap{position:relative;z-index:5}
+@media(max-width:800px){body>.site-paper{opacity:.3}}
+.torn-top::before{z-index:3}

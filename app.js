@@ -105,54 +105,20 @@
     party.addEventListener('pointerleave', resetParty);
     motionPreference.addEventListener('change', resetParty);
   }
-  const paperVideos = [...document.querySelectorAll('.paper-video')];
-  const visiblePapers = new Set();
-  let paperSource;
-  const loadPaperSource = url => {
-    if (!paperSource) paperSource = fetch(url).then(response => {
-      if (!response.ok) throw new Error('Paper video unavailable');
-      return response.blob();
-    }).then(blob => URL.createObjectURL(blob)).catch(() => url);
-    return paperSource;
-  };
-  const startPaper = video => {
-    if (document.hidden || !visiblePapers.has(video.parentElement)) return;
-    if (video.paused) video.play().catch(() => video.parentElement.classList.remove('is-playing'));
-  };
+  const paperVideo = document.querySelector('.paper-video');
   const updatePaperMotion = () => {
-    paperVideos.forEach(video => {
-      const overlay = video.parentElement;
-      if (document.hidden || !visiblePapers.has(overlay)) {
-        video.pause();
-        return;
-      }
-      video.muted = true;
-      video.defaultMuted = true;
-      video.playsInline = true;
-      video.playbackRate = motionPreference.matches ? 0.5 : 1;
-      if (!video.getAttribute('src')) {
-        if (video.dataset.loading) return;
-        video.dataset.loading = 'true';
-        loadPaperSource(video.dataset.src).then(source => {
-          video.src = source;
-          delete video.dataset.loading;
-          startPaper(video);
-        });
-      } else startPaper(video);
-    });
+    if (!paperVideo) return;
+    if (document.hidden) { paperVideo.pause(); return; }
+    paperVideo.muted = true;
+    paperVideo.defaultMuted = true;
+    paperVideo.playsInline = true;
+    paperVideo.playbackRate = motionPreference.matches ? 0.75 : 1;
+    if (!paperVideo.getAttribute('src')) paperVideo.src = paperVideo.dataset.src;
+    if (paperVideo.paused) paperVideo.play().catch(() => paperVideo.parentElement.classList.remove('is-playing'));
   };
-  const paperObserver = 'IntersectionObserver' in window ? new IntersectionObserver(entries => {
-    entries.forEach(({target, isIntersecting}) => {
-      if (isIntersecting) visiblePapers.add(target); else visiblePapers.delete(target);
-    });
-    updatePaperMotion();
-  }, {threshold:0}) : null;
-  paperVideos.forEach(video => {
-    video.addEventListener('playing', () => video.parentElement.classList.add('is-playing'));
-    video.addEventListener('error', () => video.parentElement.classList.remove('is-playing'));
-    if (paperObserver) paperObserver.observe(video.parentElement); else visiblePapers.add(video.parentElement);
-  });
-  // Mobile power-saving modes may defer autoplay until the first interaction
+  paperVideo?.addEventListener('playing', () => paperVideo.parentElement.classList.add('is-playing'));
+  paperVideo?.addEventListener('error', () => paperVideo.parentElement.classList.remove('is-playing'));
+  // Browsers that defer muted autoplay retry on the first interaction
   ['pointerdown', 'touchstart', 'keydown'].forEach(event => document.addEventListener(event, updatePaperMotion, {passive:true}));
   motionPreference.addEventListener('change', updatePaperMotion);
   const updatePageMotion = () => {
