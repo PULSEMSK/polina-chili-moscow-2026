@@ -257,3 +257,16 @@ body>.site-paper{position:fixed;inset:0;z-index:4;mask-image:none;-webkit-mask-i
 main>section>.wrap,.venue>.wrap,.rally-strip>.wrap{position:relative;z-index:5}
 @media(max-width:800px){body>.site-paper{opacity:.3}}
 .torn-top::before{z-index:3}
+
+
+/* Live Ticketscloud promotion: only dancefloor and pair tickets are discounted. */
+.hero-price--promo{display:flex;flex-wrap:wrap;align-items:baseline;gap:6px 12px;margin-top:14px;line-height:1.3}
+.hero-price--promo>span{flex-basis:100%;font-size:13px;font-weight:700;letter-spacing:.06em;text-transform:uppercase}
+.hero-price--promo>s{font-size:17px;color:#e7cdb9;text-decoration-thickness:1.5px}
+.hero-price--promo>strong{font-size:25px;font-weight:900;white-space:nowrap}
+.ticket-promo{display:inline-block;align-self:flex-start;margin-bottom:9px;border:1px solid #b5091260;border-radius:4px;padding:4px 8px;color:var(--red-deep);font-size:12px;font-weight:700;line-height:1.3;letter-spacing:.025em;text-transform:uppercase}
+.ticket-price--promo{gap:6px 14px}
+.ticket-price--promo>s{font-size:24px;font-weight:700;color:#6f5c50;text-decoration-color:var(--red);text-decoration-thickness:2px;white-space:nowrap}
+.ticket-price--promo>strong{font-size:44px;font-weight:900;color:var(--red);white-space:nowrap}
+@media(max-width:1100px) and (min-width:801px){.ticket-price--promo{gap:5px 10px}.ticket-price--promo>s{font-size:20px}.ticket-price--promo>strong{font-size:36px}}
+@media(max-width:380px){.ticket-price--promo>s{font-size:21px}.ticket-price--promo>strong{font-size:38px}.hero-price--promo>strong{font-size:23px}}
