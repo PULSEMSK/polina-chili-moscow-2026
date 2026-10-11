@@ -143,18 +143,7 @@
 
   document.querySelectorAll('[data-buy]').forEach(link => {
     link.href = destination.href;
-    link.setAttribute('data-tc-event', config.event);
-    link.setAttribute('data-tc-token', config.token);
-    keys.forEach(key => {
-      if (destination.searchParams.has(key)) link.setAttribute(`data-tc-${key}`, destination.searchParams.get(key));
-    });
   });
 
-  // The official widget handles checkout; the original href remains a fallback
-  const widget = document.createElement('script');
-  widget.src = 'https://ticketscloud.com/static/scripts/widget/tcwidget.js';
-  widget.async = true;
-  widget.addEventListener('load', () => { document.documentElement.dataset.ticketWidget = 'ready'; });
-  widget.addEventListener('error', () => { document.documentElement.dataset.ticketWidget = 'fallback'; });
-  document.head.appendChild(widget);
+  // Temporary direct checkout: do not load Ticketscloud or attach its interception attributes.
 })();
