@@ -145,5 +145,79 @@
     link.href = destination.href;
   });
 
-  // Temporary direct checkout: do not load Ticketscloud or attach its interception attributes.
+  // Qtickets owns the checkout modal, as on the CHEBANOV landing pages.
+  const sdkURL = 'https://cdn.qtickets.tech/openapi.js';
+  let ready = false;
+  let loading = false;
+  let error = '';
+  let timer;
+  const installAttribution = () => {
+    const jq = window.jQueryQtickets;
+    if (typeof jq !== 'function') return;
+    jq(document).off('qtickets.openapi.prepareRequest.polinaChili');
+    jq(document).on('qtickets.openapi.prepareRequest.polinaChili', (_event, request) => {
+      if (!request || String(request.event_id) !== String(config.eventId)) return;
+      Object.keys(request).filter(key => key.startsWith('utm_')).forEach(key => delete request[key]);
+      destination.searchParams.forEach((value, key) => { if (key.startsWith('utm_')) request[key] = value; });
+      request.base_color = config.color;
+      request.lang = request.lang || 'ru';
+      request.site_url = location.href;
+      if (document.referrer) request.site_referer = document.referrer;
+      if (incoming.get('yclid')) {
+        if (!request.ads || typeof request.ads !== 'object') request.ads = {};
+        request.ads.yclid = incoming.get('yclid');
+      }
+    });
+  };
+  const init = () => {
+    if (typeof window.qTickets?.init !== 'function') return false;
+    try {
+      window.qTickets.init();
+      installAttribution();
+      if (typeof window.jQueryQtickets === 'function') window.jQueryQtickets(() => setTimeout(installAttribution, 0));
+      ready = true; loading = false; error = '';
+      return true;
+    } catch (err) { error = String(err); return false; }
+  };
+  const load = () => {
+    if (loading || init()) return;
+    loading = true;
+    const deadline = Date.now() + 15000;
+    const check = () => {
+      clearTimeout(timer);
+      if (init()) return;
+      if (Date.now() >= deadline) { loading = false; error = error || 'SDK timeout'; return; }
+      timer = setTimeout(check, 100);
+    };
+    const script = document.createElement('script');
+    script.src = sdkURL; script.async = true;
+    script.addEventListener('load', check, { once: true });
+    script.addEventListener('error', () => { clearTimeout(timer); loading = false; error = 'SDK network error'; }, { once: true });
+    document.head.append(script);
+    check();
+  };
+  const officialLink = link => {
+    link.href = destination.href;
+    link.removeAttribute('target');
+    link.setAttribute('aria-haspopup', 'dialog');
+  };
+  document.querySelectorAll('[data-buy]').forEach(officialLink);
+  document.addEventListener('click', event => {
+    const link = event.target instanceof Element ? event.target.closest('a[data-buy]') : null;
+    if (!link || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+    // Release our menu's top layer before Qtickets displays its own modal.
+    if (menu.open) menu.close();
+    officialLink(link);
+    if (!ready) {
+      // A trusted click still opens the checkout if its SDK is blocked or late.
+      link.target = '_blank';
+      event.stopImmediatePropagation();
+      setTimeout(() => officialLink(link), 0);
+      return;
+    }
+    installAttribution();
+    // Do not intercept default/bubbling: the official SDK owns the purchase flow.
+  }, true);
+  window.polinaChiliTickets = { getStatus: () => ({ ready, loading, error, eventId: config.eventId }) };
+  load();
 })();

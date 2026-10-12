@@ -1,4 +1,6 @@
-// Temporary Ticketland checkout. Revert this change only when the owner requests it.
+// Official Qtickets checkout. All purchase buttons use its native modal.
 window.CHILI_TICKETS = {
-  url: "https://www.ticketland.ru/drugoe/restoran-original/polina-chili-hb-party-1/?utm_source=tt&utm_medium=tt&utm_campaign=tt"
+  eventId: "265491",
+  color: "d4132a",
+  url: "https://qtickets.ru/event/265491?base_color=d4132a"
 };
